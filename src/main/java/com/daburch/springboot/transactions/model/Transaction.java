@@ -22,9 +22,11 @@ public class Transaction {
             setId(UUID.randomUUID());
         }
 
-        return !(StringUtils.isEmpty(getName()) ||
-                StringUtils.isEmpty(getCost()) ||
-                StringUtils.isEmpty(getCategory()));
+        if (getCost() == 0.0) {
+            return false;
+        }
+
+        return !(StringUtils.isEmpty(getName()));
     }
 
     public UUID getId() {
