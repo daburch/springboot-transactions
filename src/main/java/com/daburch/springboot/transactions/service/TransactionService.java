@@ -20,12 +20,16 @@ public class TransactionService {
         this.transactionDao = transactionDao;
     }
 
-    public boolean createTransaction(Transaction transaction) {
+    public UUID createTransaction(Transaction transaction) {
         if (!transaction.validate()) {
-            return false;
+            return null;
         }
 
-        return transactionDao.createTransaction(transaction);
+        if(transactionDao.createTransaction(transaction)) {
+            return transaction.getId();
+        } else {
+            return null;
+        }
     }
 
     public Set<Transaction> getAllTransactions() {
@@ -41,6 +45,12 @@ public class TransactionService {
     }
 
     public boolean updateTransaction(UUID id, Transaction transaction) {
+        if (StringUtils.isEmpty(transaction.getId())) {
+            transaction.setId(id);
+        } else if (!transaction.getId().equals(id)) {
+            return false;
+        }
+
         if (!transaction.validate()) {
             return false;
         }

@@ -21,7 +21,7 @@ public class TransactionController {
     }
 
     @PostMapping
-    public boolean createTransaction(@RequestBody @NonNull Transaction transaction) {
+    public UUID createTransaction(@RequestBody @NonNull Transaction transaction) {
         return transactionService.createTransaction(transaction);
     }
 
