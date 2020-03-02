@@ -3,6 +3,8 @@ package com.daburch.springboot.transactions.api;
 import com.daburch.springboot.transactions.model.Transaction;
 import com.daburch.springboot.transactions.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,22 +28,40 @@ public class TransactionController {
     }
 
     @PostMapping
-    public UUID createTransaction(@RequestBody @NonNull Transaction transaction) {
-        return transactionService.createTransaction(transaction);
+    public ResponseEntity<UUID> createTransaction(@RequestBody @NonNull Transaction transaction) {
+        UUID id = transactionService.createTransaction(transaction);
+        if (id != null) {
+            return new ResponseEntity<>(id, HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping("read/{id}")
-    public Transaction readTransaction(@PathVariable UUID id) {
-        return transactionService.readTransaction(id);
+    public ResponseEntity<Transaction> readTransaction(@PathVariable UUID id) {
+        Transaction transaction = transactionService.readTransaction(id);
+        if (transaction != null) {
+            return new ResponseEntity<>(transaction, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @PutMapping("{id}")
-    public boolean updateTransaction(@PathVariable UUID id, @RequestBody @NonNull Transaction transaction) {
-        return transactionService.updateTransaction(id, transaction);
+    public ResponseEntity<Boolean> updateTransaction(@PathVariable UUID id, @RequestBody @NonNull Transaction transaction) {
+        if (transactionService.updateTransaction(id, transaction)) {
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @DeleteMapping("{id}")
-    public boolean deleteTransaction(@PathVariable UUID id) {
-        return transactionService.deleteTransaction(id);
+    public ResponseEntity<Boolean> deleteTransaction(@PathVariable UUID id) {
+        if (transactionService.deleteTransaction(id)) {
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }
