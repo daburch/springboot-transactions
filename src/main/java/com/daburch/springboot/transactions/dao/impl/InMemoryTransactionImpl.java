@@ -2,12 +2,13 @@ package com.daburch.springboot.transactions.dao.impl;
 
 import com.daburch.springboot.transactions.dao.TransactionDao;
 import com.daburch.springboot.transactions.model.Transaction;
+import org.springframework.stereotype.Repository;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+@Repository("inMemoryTransactionDao")
 public class InMemoryTransactionImpl implements TransactionDao {
 
     private static Set<Transaction> DB;
@@ -28,9 +29,7 @@ public class InMemoryTransactionImpl implements TransactionDao {
 
     @Override
     public Transaction readTransaction(UUID id) {
-        return DB.stream().filter((transaction) -> {
-            return transaction.getId().equals(id);
-        }).findFirst().orElse(null);
+        return DB.stream().filter((transaction) -> transaction.getId().equals(id)).findFirst().orElse(null);
     }
 
     @Override

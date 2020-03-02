@@ -1,5 +1,7 @@
 package com.daburch.springboot.transactions.model;
 
+import org.springframework.util.StringUtils;
+
 import java.util.UUID;
 
 public class Transaction {
@@ -13,6 +15,16 @@ public class Transaction {
         this.name = name;
         this.cost = cost;
         this.category = category;
+    }
+
+    public boolean validate() {
+        if (StringUtils.isEmpty(getId())) {
+            setId(UUID.randomUUID());
+        }
+
+        return !(StringUtils.isEmpty(getName()) ||
+                StringUtils.isEmpty(getCost()) ||
+                StringUtils.isEmpty(getCategory()));
     }
 
     public UUID getId() {
