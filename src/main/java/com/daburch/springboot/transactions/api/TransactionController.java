@@ -20,28 +20,28 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
-    @PostMapping
-    public UUID createTransaction(@RequestBody @NonNull Transaction transaction) {
-        return transactionService.createTransaction(transaction);
-    }
-
     @GetMapping
     public Set<Transaction> getAllTransactions() {
         return transactionService.getAllTransactions();
     }
 
-    @PostMapping("read")
-    public Transaction readTransaction(@RequestBody @NonNull UUID id) {
+    @PostMapping
+    public UUID createTransaction(@RequestBody @NonNull Transaction transaction) {
+        return transactionService.createTransaction(transaction);
+    }
+
+    @PostMapping("read/{id}")
+    public Transaction readTransaction(@PathVariable UUID id) {
         return transactionService.readTransaction(id);
     }
 
-    @PutMapping
-    public boolean updateTransaction(@RequestBody @NonNull UUID id, @RequestBody @NonNull Transaction transaction) {
+    @PutMapping("{id}")
+    public boolean updateTransaction(@PathVariable UUID id, @RequestBody @NonNull Transaction transaction) {
         return transactionService.updateTransaction(id, transaction);
     }
 
-    @DeleteMapping
-    public boolean deleteTransaction(@RequestBody @NonNull UUID id) {
+    @DeleteMapping("{id}")
+    public boolean deleteTransaction(@PathVariable UUID id) {
         return transactionService.deleteTransaction(id);
     }
 }
