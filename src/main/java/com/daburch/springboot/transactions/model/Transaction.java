@@ -58,4 +58,6 @@ public class Transaction {
     public void setCategory(TransactionCategory category) {
         this.category = category;
     }
+
+
 }

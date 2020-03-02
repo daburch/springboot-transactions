@@ -4,51 +4,50 @@ import com.daburch.springboot.transactions.dao.TransactionDao;
 import com.daburch.springboot.transactions.model.Transaction;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Repository("inMemoryTransactionDao")
 public class InMemoryTransactionImpl implements TransactionDao {
 
-    private static Set<Transaction> DB;
+    private static HashMap<UUID, Transaction> DB;
 
     static {
-        DB = new HashSet<>();
+        DB = new HashMap<>();
     }
 
     @Override
     public boolean createTransaction(Transaction transaction) {
-        return DB.add(transaction);
+        if (DB.containsKey(transaction.getId())) return false;
+        DB.put(transaction.getId(), transaction);
+        return true;
     }
 
     @Override
     public Set<Transaction> getAllTransactions() {
-        return DB;
+        return new HashSet<>(DB.values());
     }
 
     @Override
     public Transaction readTransaction(UUID id) {
-        return DB.stream().filter((transaction) -> transaction.getId().equals(id)).findFirst().orElse(null);
+        return DB.get(id);
     }
 
     @Override
     public boolean updateTransaction(UUID id, Transaction inTransaction) {
-        Transaction transactionToUpdate = readTransaction(id);
-        if (transactionToUpdate == null) return false;
+        if (!DB.containsKey(id)) return false;
 
-        transactionToUpdate.setName(inTransaction.getName());
-        transactionToUpdate.setCost(inTransaction.getCost());
-        transactionToUpdate.setCategory(inTransaction.getCategory());
-
+        DB.put(id, inTransaction);
         return true;
     }
 
     @Override
     public boolean deleteTransaction(UUID id) {
-        Transaction transactionToDelete = readTransaction(id);
-        if (transactionToDelete == null) return false;
-
-        return DB.remove(transactionToDelete);
+        if (!DB.containsKey(id)) return false;
+        DB.remove(id);
+        return true;
     }
 }
