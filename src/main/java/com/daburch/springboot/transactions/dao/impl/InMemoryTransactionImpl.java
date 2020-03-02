@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Repository("inMemoryTransactionDao")
 public class InMemoryTransactionImpl implements TransactionDao {
