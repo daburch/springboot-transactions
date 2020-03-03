@@ -20,13 +20,13 @@ public class TransactionService {
         this.transactionDao = transactionDao;
     }
 
-    public UUID createTransaction(Transaction transaction) {
+    public Transaction createTransaction(Transaction transaction) {
         if (!transaction.validate()) {
             return null;
         }
 
         if(transactionDao.createTransaction(transaction)) {
-            return transaction.getId();
+            return transaction;
         } else {
             return null;
         }

@@ -29,10 +29,10 @@ public class TransactionController {
     }
 
     @PostMapping
-    public ResponseEntity<UUID> createTransaction(@RequestBody @NonNull Transaction transaction) {
-        UUID id = transactionService.createTransaction(transaction);
-        if (id != null) {
-            return new ResponseEntity<>(id, HttpStatus.CREATED);
+    public ResponseEntity<Transaction> createTransaction(@RequestBody @NonNull Transaction transaction) {
+        Transaction retTransaction = transactionService.createTransaction(transaction);
+        if (retTransaction != null) {
+            return new ResponseEntity<>(retTransaction, HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
