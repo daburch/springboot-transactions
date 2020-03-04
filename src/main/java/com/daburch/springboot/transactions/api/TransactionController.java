@@ -1,5 +1,6 @@
 package com.daburch.springboot.transactions.api;
 
+import com.daburch.springboot.transactions.exception.ValidationException;
 import com.daburch.springboot.transactions.model.Transaction;
 import com.daburch.springboot.transactions.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,13 @@ public class TransactionController {
 
     @PostMapping
     public ResponseEntity<Transaction> createTransaction(@RequestBody @NonNull Transaction transaction) {
-        Transaction retTransaction = transactionService.createTransaction(transaction);
+        Transaction retTransaction;
+        try {
+            retTransaction = transactionService.createTransaction(transaction);
+        } catch (ValidationException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         if (retTransaction != null) {
             return new ResponseEntity<>(retTransaction, HttpStatus.CREATED);
         } else {
@@ -50,7 +57,13 @@ public class TransactionController {
 
     @PutMapping("{id}")
     public ResponseEntity<Transaction> updateTransaction(@PathVariable long id, @RequestBody @NonNull Transaction transaction) {
-        Transaction returnTransaction = transactionService.updateTransaction(id, transaction);
+        Transaction returnTransaction;
+        try {
+            returnTransaction = transactionService.updateTransaction(id, transaction);
+        } catch (ValidationException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
         if (returnTransaction != null) {
             return new ResponseEntity<>(returnTransaction, HttpStatus.OK);
         } else {

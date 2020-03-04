@@ -1,5 +1,6 @@
 package com.daburch.springboot.transactions.model;
 
+import com.daburch.springboot.transactions.exception.ValidationException;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
@@ -29,12 +30,15 @@ public class Transaction {
         this.date = date;
     }
 
-    public boolean validate() {
-        if (getAmount() == 0.0) {
-            return false;
+    public void validate() throws ValidationException {
+        if (id != 0) {
+            throw new ValidationException("Transaction ID should not be set. This will be handled by the database");
         }
 
-        return !(StringUtils.isEmpty(getDescription()));
+        // defaults
+        if (description == null) description = "";
+        if (category == null) category = "OTHER";
+        if (date == null) date = new Date();
     }
 
     public long getId() {

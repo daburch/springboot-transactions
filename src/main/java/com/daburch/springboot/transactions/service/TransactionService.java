@@ -1,6 +1,7 @@
 package com.daburch.springboot.transactions.service;
 
 import com.daburch.springboot.transactions.dao.TransactionRepository;
+import com.daburch.springboot.transactions.exception.ValidationException;
 import com.daburch.springboot.transactions.model.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,12 +19,8 @@ public class TransactionService {
         this.transactionRepository = transactionRepository;
     }
 
-    public Transaction createTransaction(Transaction transaction) {
-        // don't allow create if the transaction already exists. Force update
-        if (transactionRepository.existsById(transaction.getId())) {
-            return null;
-        }
-
+    public Transaction createTransaction(Transaction transaction) throws ValidationException {
+        transaction.validate();
         return transactionRepository.save(transaction);
     }
 
@@ -40,17 +37,16 @@ public class TransactionService {
         return transactionRepository.findById(id).orElse(null);
     }
 
-    public Transaction updateTransaction(long id, Transaction transaction) {
-        Transaction transactionToUpdate = readTransaction(id);
+    public Transaction updateTransaction(long id, Transaction transaction) throws ValidationException {
+        transaction.validate();
 
-        if (transactionToUpdate == null) {
-            return null;
-        } else {
-            transactionToUpdate.setAmount(transaction.getAmount());
-            transactionToUpdate.setCategory(transaction.getCategory());
-            transactionToUpdate.setDate(transaction.getDate());
-            transactionToUpdate.setDescription(transaction.getDescription());
-        }
+        Transaction transactionToUpdate = readTransaction(id);
+        if (transactionToUpdate == null) return null;
+
+        transactionToUpdate.setAmount(transaction.getAmount());
+        transactionToUpdate.setCategory(transaction.getCategory());
+        transactionToUpdate.setDate(transaction.getDate());
+        transactionToUpdate.setDescription(transaction.getDescription());
 
         return transactionRepository.save(transactionToUpdate);
     }
