@@ -2,62 +2,95 @@ package com.daburch.springboot.transactions.model;
 
 import org.springframework.util.StringUtils;
 
-import java.util.UUID;
+import javax.persistence.*;
 
+import java.util.Date;
+import java.util.Objects;
+
+@Entity
+@Table(name = "transactions")
 public class Transaction {
-    private UUID id;
-    private String name;
-    private float cost;
-    private TransactionCategory category;
+    @Id
+    @GeneratedValue(strategy= GenerationType.AUTO)
+    private long id;
+    private String description;
+    private float amount;
+    private String category;
+    private Date date;
 
-    public Transaction(UUID id, String name, float cost, TransactionCategory category) {
+    public Transaction() {
+    }
+
+    public Transaction(long id, String description, float amount, String category, Date date) {
         this.id = id;
-        this.name = name;
-        this.cost = cost;
+        this.description = description;
+        this.amount = amount;
         this.category = category;
+        this.date = date;
     }
 
     public boolean validate() {
-        if (StringUtils.isEmpty(getId())) {
-            setId(UUID.randomUUID());
-        }
-
-        if (getCost() == 0.0) {
+        if (getAmount() == 0.0) {
             return false;
         }
 
-        return !(StringUtils.isEmpty(getName()));
+        return !(StringUtils.isEmpty(getDescription()));
     }
 
-    public UUID getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getDescription() {
+        return description;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public float getCost() {
-        return cost;
+    public float getAmount() {
+        return amount;
     }
 
-    public void setCost(float cost) {
-        this.cost = cost;
+    public void setAmount(float amount) {
+        this.amount = amount;
     }
 
-    public TransactionCategory getCategory() {
+    public String getCategory() {
         return category;
     }
 
-    public void setCategory(TransactionCategory category) {
+    public void setCategory(String category) {
         this.category = category;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Transaction that = (Transaction) o;
+        return id == that.id &&
+                Float.compare(that.amount, amount) == 0 &&
+                Objects.equals(description, that.description) &&
+                Objects.equals(category, that.category) &&
+                Objects.equals(date, that.date);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, description, amount, category, date);
     }
 }

@@ -1,68 +1,64 @@
 package com.daburch.springboot.transactions.service;
 
-import com.daburch.springboot.transactions.dao.TransactionDao;
+import com.daburch.springboot.transactions.dao.TransactionRepository;
 import com.daburch.springboot.transactions.model.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class TransactionService {
 
-    private final TransactionDao transactionDao;
+    private final TransactionRepository transactionRepository;
 
     @Autowired
-    public TransactionService(@Qualifier("inMemoryTransactionDao") TransactionDao transactionDao) {
-        this.transactionDao = transactionDao;
+    public TransactionService(@Qualifier("MySQLManualTransactionRepository") TransactionRepository transactionRepository) {
+        this.transactionRepository = transactionRepository;
     }
 
     public Transaction createTransaction(Transaction transaction) {
-        if (!transaction.validate()) {
+        // don't allow create if the transaction already exists. Force update
+        if (transactionRepository.existsById(transaction.getId())) {
             return null;
         }
 
-        if(transactionDao.createTransaction(transaction)) {
-            return transaction;
+        return transactionRepository.save(transaction);
+    }
+
+    public List<Transaction> getAllTransactions() {
+        List<Transaction> transactions = new ArrayList<>();
+        for (Transaction t : transactionRepository.findAll()) {
+            transactions.add(t);
+        }
+
+        return transactions;
+    }
+
+    public Transaction readTransaction(long id) {
+        return transactionRepository.findById(id).orElse(null);
+    }
+
+    public Transaction updateTransaction(long id, Transaction transaction) {
+        Transaction transactionToUpdate = readTransaction(id);
+
+        if (transactionToUpdate == null) {
+            return null;
         } else {
-            return null;
+            transactionToUpdate.setAmount(transaction.getAmount());
+            transactionToUpdate.setCategory(transaction.getCategory());
+            transactionToUpdate.setDate(transaction.getDate());
+            transactionToUpdate.setDescription(transaction.getDescription());
         }
+
+        return transactionRepository.save(transactionToUpdate);
     }
 
-    public Set<Transaction> getAllTransactions() {
-        return transactionDao.getAllTransactions();
-    }
+    public boolean deleteTransaction(long id) {
+        if (readTransaction(id) == null) return false;
 
-    public Transaction readTransaction(UUID id) {
-        if (StringUtils.isEmpty(id)) {
-            return null;
-        }
-
-        return transactionDao.readTransaction(id);
-    }
-
-    public boolean updateTransaction(UUID id, Transaction transaction) {
-        if (StringUtils.isEmpty(transaction.getId())) {
-            transaction.setId(id);
-        } else if (!transaction.getId().equals(id)) {
-            return false;
-        }
-
-        if (!transaction.validate()) {
-            return false;
-        }
-
-        return transactionDao.updateTransaction(id, transaction);
-    }
-
-    public boolean deleteTransaction(UUID id) {
-        if (StringUtils.isEmpty(id)) {
-            return false;
-        }
-
-        return transactionDao.deleteTransaction(id);
+        transactionRepository.deleteById(id);
+        return true;
     }
 }

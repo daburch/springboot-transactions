@@ -8,8 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 @CrossOrigin(origins = "*")
 @RequestMapping("api/v1/transaction")
@@ -24,7 +24,7 @@ public class TransactionController {
     }
 
     @GetMapping
-    public Set<Transaction> getAllTransactions() {
+    public List<Transaction> getAllTransactions() {
         return transactionService.getAllTransactions();
     }
 
@@ -39,7 +39,7 @@ public class TransactionController {
     }
 
     @PostMapping("read/{id}")
-    public ResponseEntity<Transaction> readTransaction(@PathVariable UUID id) {
+    public ResponseEntity<Transaction> readTransaction(@PathVariable long id) {
         Transaction transaction = transactionService.readTransaction(id);
         if (transaction != null) {
             return new ResponseEntity<>(transaction, HttpStatus.OK);
@@ -49,16 +49,17 @@ public class TransactionController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Boolean> updateTransaction(@PathVariable UUID id, @RequestBody @NonNull Transaction transaction) {
-        if (transactionService.updateTransaction(id, transaction)) {
-            return new ResponseEntity<>(true, HttpStatus.OK);
+    public ResponseEntity<Transaction> updateTransaction(@PathVariable long id, @RequestBody @NonNull Transaction transaction) {
+        Transaction returnTransaction = transactionService.updateTransaction(id, transaction);
+        if (returnTransaction != null) {
+            return new ResponseEntity<>(returnTransaction, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Boolean> deleteTransaction(@PathVariable UUID id) {
+    public ResponseEntity<Boolean> deleteTransaction(@PathVariable long id) {
         if (transactionService.deleteTransaction(id)) {
             return new ResponseEntity<>(true, HttpStatus.OK);
         } else {

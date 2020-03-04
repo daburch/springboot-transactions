@@ -1,52 +1,76 @@
 package com.daburch.springboot.transactions.dao.impl;
 
-import com.daburch.springboot.transactions.dao.TransactionDao;
+import com.daburch.springboot.transactions.dao.TransactionRepository;
 import com.daburch.springboot.transactions.model.Transaction;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
-@Repository("inMemoryTransactionDao")
-public class InMemoryTransactionImpl implements TransactionDao {
+@Repository("InMemoryTransactionRepository")
+public class InMemoryTransactionRepository implements TransactionRepository {
 
-    private static HashMap<UUID, Transaction> DB;
+    private static long id;
+    private static HashMap<Long, Transaction> DB;
 
     static {
+        id = 1;
         DB = new HashMap<>();
     }
 
     @Override
-    public boolean createTransaction(Transaction transaction) {
-        if (DB.containsKey(transaction.getId())) return false;
-        DB.put(transaction.getId(), transaction);
-        return true;
+    public <S extends Transaction> S save(S entity) {
+        entity.setId(id++);
+        DB.put(entity.getId(), entity);
+        return entity;
     }
 
     @Override
-    public Set<Transaction> getAllTransactions() {
-        return new HashSet<>(DB.values());
+    public <S extends Transaction> Iterable<S> saveAll(Iterable<S> entities) {
+        return null;
     }
 
     @Override
-    public Transaction readTransaction(UUID id) {
-        return DB.get(id);
+    public Optional<Transaction> findById(Long aLong) {
+        return Optional.ofNullable(DB.get(aLong));
     }
 
     @Override
-    public boolean updateTransaction(UUID id, Transaction inTransaction) {
-        if (!DB.containsKey(id)) return false;
-
-        DB.put(id, inTransaction);
-        return true;
+    public boolean existsById(Long aLong) {
+        return DB.containsKey(aLong);
     }
 
     @Override
-    public boolean deleteTransaction(UUID id) {
-        if (!DB.containsKey(id)) return false;
-        DB.remove(id);
-        return true;
+    public Iterable<Transaction> findAll() {
+        return DB.values();
+    }
+
+    @Override
+    public Iterable<Transaction> findAllById(Iterable<Long> longs) {
+        return null;
+    }
+
+    @Override
+    public long count() {
+        return DB.size();
+    }
+
+    @Override
+    public void deleteById(Long aLong) {
+        DB.remove(aLong);
+    }
+
+    @Override
+    public void delete(Transaction entity) {
+        DB.remove(entity.getId());
+    }
+
+    @Override
+    public void deleteAll(Iterable<? extends Transaction> entities) {
+        entities.forEach(this::delete);
+    }
+
+    @Override
+    public void deleteAll() {
+        DB.clear();
     }
 }
