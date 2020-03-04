@@ -14,7 +14,7 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
 
     @Autowired
-    public TransactionService(@Qualifier("MySQLManualTransactionRepository") TransactionRepository transactionRepository) {
+    public TransactionService(@Qualifier("MySQLAutomaticTransactionRepository") TransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;
     }
 
