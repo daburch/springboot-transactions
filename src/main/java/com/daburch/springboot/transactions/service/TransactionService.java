@@ -14,7 +14,7 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
 
     @Autowired
-    public TransactionService(@Qualifier("MySQLAutomaticTransactionRepository") TransactionRepository transactionRepository) {
+    public TransactionService(@Qualifier("MySQLManualTransactionRepository") TransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;
     }
 
@@ -55,10 +55,7 @@ public class TransactionService {
         return transactionRepository.save(transactionToUpdate);
     }
 
-    public boolean deleteTransaction(long id) {
-        if (readTransaction(id) == null) return false;
-
+    public void deleteTransaction(long id) {
         transactionRepository.deleteById(id);
-        return true;
     }
 }
