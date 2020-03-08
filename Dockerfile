@@ -6,7 +6,7 @@ WORKDIR /home/gradle/src
 RUN gradle build --no-daemon 
 
 # Copy and run the jar
-FROM openjdk:12
+FROM openjdk:13
 COPY --from=build /home/gradle/src/build/libs/transaction-tracker-api-1.0.0-SNAPSHOT.jar .
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "transaction-tracker-api-1.0.0-SNAPSHOT.jar"]
