@@ -1,5 +1,5 @@
-Spring boot RESTful API for adding transactions to a database
+Transaction tracker API using spring boot
 
-usage: 
-* docker build -t springboot-transactions-api
-* docker run -p 8080:8080 --link mysql:mysql -d springboot-transactions-api 
+usage:
+* docker build -t transaction-tracker-api .
+* docker run -p 8080:8080 --link transaction-tracker-database-mysql:mysql -d transaction-tracker-api

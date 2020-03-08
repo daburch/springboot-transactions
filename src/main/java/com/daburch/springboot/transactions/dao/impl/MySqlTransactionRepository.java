@@ -38,7 +38,7 @@ public class MySqlTransactionRepository implements TransactionRepository {
             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setFloat(1, entity.getAmount());
             ps.setString(2, entity.getDescription());
-            ps.setString(3, sdf.format(entity.getDate()));
+            ps.setTimestamp(3, new java.sql.Timestamp(entity.getDate().getTime()));
             ps.setString(4, entity.getCategory());
             return ps;
         }, keyHolder);
@@ -64,7 +64,7 @@ public class MySqlTransactionRepository implements TransactionRepository {
                         resultSet.getString("description"),
                         resultSet.getFloat("amount"),
                         resultSet.getString("category"),
-                        resultSet.getDate("date")));
+                        resultSet.getTimestamp("date")));
 
         if (transactions.size() == 0) {
             return Optional.empty();
@@ -85,7 +85,7 @@ public class MySqlTransactionRepository implements TransactionRepository {
                         resultSet.getString("description"),
                         resultSet.getFloat("amount"),
                         resultSet.getString("category"),
-                        resultSet.getDate("date")));
+                        resultSet.getTimestamp("date")));
     }
 
     @Override

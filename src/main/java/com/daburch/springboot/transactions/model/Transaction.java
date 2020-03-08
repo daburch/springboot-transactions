@@ -1,7 +1,6 @@
 package com.daburch.springboot.transactions.model;
 
 import com.daburch.springboot.transactions.exception.ValidationException;
-import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 
