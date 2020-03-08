@@ -2,8 +2,8 @@ FROM openjdk:12
 
 MAINTAINER david.allen.burch@gmail.com
 
-ADD /build/libs/springboot-transactions-api-0.0.1-SNAPSHOT.jar .
+ADD /build/libs/transaction-tracker-api-1.0.0-SNAPSHOT.jar .
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "springboot-transactions-api-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "transaction-tracker-api-1.0.0-SNAPSHOT.jar"]
