@@ -2,12 +2,14 @@ package com.daburch.springboot.transactions.dao.impl;
 
 import com.daburch.springboot.transactions.dao.TransactionRepository;
 import com.daburch.springboot.transactions.model.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
-@Repository("InMemoryTransactionRepository")
-public class InMemoryTransactionRepository implements TransactionRepository {
+@Repository("HashMapTransactionRepository")
+public class HashMapTransactionRepository implements TransactionRepository {
 
     private static long id;
     private static HashMap<Long, Transaction> DB;
@@ -16,6 +18,9 @@ public class InMemoryTransactionRepository implements TransactionRepository {
         id = 1;
         DB = new HashMap<>();
     }
+
+    @Autowired
+    public HashMapTransactionRepository() { }
 
     @Override
     public <S extends Transaction> S save(S entity) {

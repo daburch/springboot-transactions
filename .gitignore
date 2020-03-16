@@ -5,6 +5,7 @@ build/
 !**/src/main/**
 !**/src/test/**
 bin/
+src/main/resources/h2
 
 ### STS ###
 .apt_generated

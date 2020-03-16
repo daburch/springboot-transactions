@@ -1,57 +1,19 @@
 package com.daburch.springboot.transactions.service;
 
-import com.daburch.springboot.transactions.dao.TransactionRepository;
 import com.daburch.springboot.transactions.exception.ValidationException;
 import com.daburch.springboot.transactions.model.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
 
-@Service
-public class TransactionService {
+public interface TransactionService {
 
-    private final TransactionRepository transactionRepository;
+    Transaction createTransaction(Transaction transaction) throws ValidationException;
 
-    @Autowired
-    public TransactionService(@Qualifier("MySQLManualTransactionRepository") TransactionRepository transactionRepository) {
-        this.transactionRepository = transactionRepository;
-    }
+    List<Transaction> getAllTransactions();
 
-    public Transaction createTransaction(Transaction transaction) throws ValidationException {
-        transaction.validate();
-        return transactionRepository.save(transaction);
-    }
+    Transaction readTransaction(long id);
 
-    public List<Transaction> getAllTransactions() {
-        List<Transaction> transactions = new ArrayList<>();
-        for (Transaction t : transactionRepository.findAll()) {
-            transactions.add(t);
-        }
+    Transaction updateTransaction(long id, Transaction transaction) throws ValidationException;
 
-        return transactions;
-    }
-
-    public Transaction readTransaction(long id) {
-        return transactionRepository.findById(id).orElse(null);
-    }
-
-    public Transaction updateTransaction(long id, Transaction transaction) throws ValidationException {
-        transaction.validate();
-
-        Transaction transactionToUpdate = readTransaction(id);
-        if (transactionToUpdate == null) return null;
-
-        transactionToUpdate.setAmount(transaction.getAmount());
-        transactionToUpdate.setCategory(transaction.getCategory());
-        transactionToUpdate.setDate(transaction.getDate());
-        transactionToUpdate.setDescription(transaction.getDescription());
-
-        return transactionRepository.save(transactionToUpdate);
-    }
-
-    public void deleteTransaction(long id) {
-        transactionRepository.deleteById(id);
-    }
+    void deleteTransaction(long id);
 }
