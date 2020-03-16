@@ -3,10 +3,10 @@ package com.daburch.springboot.transactions.dao.impl;
 import com.daburch.springboot.transactions.dao.TransactionRepository;
 import com.daburch.springboot.transactions.model.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Optional;
 
 @Repository("HashMapTransactionRepository")
 public class HashMapTransactionRepository implements TransactionRepository {

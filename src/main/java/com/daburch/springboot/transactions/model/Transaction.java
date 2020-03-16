@@ -3,7 +3,6 @@ package com.daburch.springboot.transactions.model;
 import com.daburch.springboot.transactions.exception.ValidationException;
 
 import javax.persistence.*;
-
 import java.util.Date;
 import java.util.Objects;
 

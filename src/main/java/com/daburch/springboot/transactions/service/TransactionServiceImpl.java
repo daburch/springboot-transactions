@@ -5,11 +5,10 @@ import com.daburch.springboot.transactions.exception.ValidationException;
 import com.daburch.springboot.transactions.model.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
