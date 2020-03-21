@@ -2,6 +2,7 @@ package com.daburch.springboot.transactions.api;
 
 import com.daburch.springboot.transactions.exception.ValidationException;
 import com.daburch.springboot.transactions.model.Transaction;
+import com.daburch.springboot.transactions.service.TransactionService;
 import com.daburch.springboot.transactions.service.TransactionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,7 @@ import java.util.List;
 @RestController
 public class TransactionController {
 
-    private final TransactionServiceImpl transactionService;
+    private final TransactionService transactionService;
 
     @Autowired
     public TransactionController(TransactionServiceImpl transactionService) {
