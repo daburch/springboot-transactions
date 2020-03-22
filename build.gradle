@@ -13,16 +13,22 @@ repositories {
 }
 
 dependencies {
+	// core
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
 
-	// MYSQL Repository
+	// Repository
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+	// MySQL
 	runtimeOnly 'mysql:mysql-connector-java'
 
-	testImplementation('org.springframework.boot:spring-boot-starter-test') {
-		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-	}
+	// H2 - In memory database
+	implementation group: 'com.h2database', name: 'h2', version: '1.4.200'
+
+	// tests
+	testImplementation('org.springframework.boot:spring-boot-starter-test')
+	implementation 'junit:junit:4.12'
 }
 
 test {

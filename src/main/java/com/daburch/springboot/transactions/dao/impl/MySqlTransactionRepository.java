@@ -4,28 +4,22 @@ import com.daburch.springboot.transactions.dao.TransactionRepository;
 import com.daburch.springboot.transactions.model.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
 
-@Repository("MySQLManualTransactionRepository")
+@Repository("MySQLTransactionRepository")
 public class MySqlTransactionRepository implements TransactionRepository {
 
-    private JdbcTemplate jdbcTemplate;
-    private SimpleDateFormat sdf;
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
     public MySqlTransactionRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssXXX");
     }
 
     @Override
