@@ -26,6 +26,9 @@ dependencies {
 	// H2 - In memory database
 	implementation group: 'com.h2database', name: 'h2', version: '1.4.200'
 
+	// MongoDB
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
 	// tests
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 	implementation 'junit:junit:4.12'

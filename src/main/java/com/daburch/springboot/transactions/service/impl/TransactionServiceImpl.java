@@ -1,10 +1,13 @@
-package com.daburch.springboot.transactions.service;
+package com.daburch.springboot.transactions.service.impl;
 
-import com.daburch.springboot.transactions.dao.TransactionRepository;
+import com.daburch.springboot.transactions.dao.MongoTransactionRepository;
+import com.daburch.springboot.transactions.dao.SequenceDao;
+import com.daburch.springboot.transactions.exception.SequenceException;
 import com.daburch.springboot.transactions.exception.ValidationException;
 import com.daburch.springboot.transactions.model.Transaction;
+import com.daburch.springboot.transactions.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -13,15 +16,25 @@ import java.util.List;
 @Service
 public class TransactionServiceImpl implements TransactionService {
 
-    private final TransactionRepository transactionRepository;
+    private static final String TRANSACTIONS_SEQ_KEY = "transactions";
+
+    private final CrudRepository<Transaction, Integer> transactionRepository;
+    private final SequenceDao sequenceDao;
 
     @Autowired
-    public TransactionServiceImpl(@Qualifier("database") TransactionRepository transactionRepository) {
+    public TransactionServiceImpl(CrudRepository<Transaction, Integer> transactionRepository,
+                                  SequenceDao sequenceDao) {
         this.transactionRepository = transactionRepository;
+        this.sequenceDao = sequenceDao;
     }
 
-    public Transaction createTransaction(Transaction transaction) throws ValidationException {
+    public Transaction createTransaction(Transaction transaction) throws ValidationException, SequenceException {
         transaction.validate();
+
+        if (transactionRepository instanceof MongoTransactionRepository) {
+            transaction.setId(sequenceDao.getNextSequenceId(TRANSACTIONS_SEQ_KEY));
+        }
+
         return transactionRepository.save(transaction);
     }
 
@@ -34,11 +47,11 @@ public class TransactionServiceImpl implements TransactionService {
         return transactions;
     }
 
-    public Transaction readTransaction(long id) {
+    public Transaction readTransaction(Integer id) {
         return transactionRepository.findById(id).orElse(null);
     }
 
-    public Transaction updateTransaction(long id, Transaction transaction) throws ValidationException {
+    public Transaction updateTransaction(Integer id, Transaction transaction) throws ValidationException {
         transaction.validate();
 
         Transaction transactionToUpdate = readTransaction(id);
@@ -52,7 +65,7 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionRepository.save(transactionToUpdate);
     }
 
-    public void deleteTransaction(long id) {
+    public void deleteTransaction(Integer id) {
         transactionRepository.deleteById(id);
     }
 }

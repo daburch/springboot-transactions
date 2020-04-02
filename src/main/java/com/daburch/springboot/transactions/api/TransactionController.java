@@ -1,9 +1,10 @@
 package com.daburch.springboot.transactions.api;
 
+import com.daburch.springboot.transactions.exception.SequenceException;
 import com.daburch.springboot.transactions.exception.ValidationException;
 import com.daburch.springboot.transactions.model.Transaction;
 import com.daburch.springboot.transactions.service.TransactionService;
-import com.daburch.springboot.transactions.service.TransactionServiceImpl;
+import com.daburch.springboot.transactions.service.impl.TransactionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +37,8 @@ public class TransactionController {
             retTransaction = transactionService.createTransaction(transaction);
         } catch (ValidationException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (SequenceException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         if (retTransaction != null) {
@@ -46,7 +49,7 @@ public class TransactionController {
     }
 
     @PostMapping("read/{id}")
-    public ResponseEntity<Transaction> readTransaction(@PathVariable long id) {
+    public ResponseEntity<Transaction> readTransaction(@PathVariable Integer id) {
         Transaction transaction = transactionService.readTransaction(id);
         if (transaction != null) {
             return new ResponseEntity<>(transaction, HttpStatus.OK);
@@ -56,7 +59,7 @@ public class TransactionController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Transaction> updateTransaction(@PathVariable long id, @RequestBody @NonNull Transaction transaction) {
+    public ResponseEntity<Transaction> updateTransaction(@PathVariable Integer id, @RequestBody @NonNull Transaction transaction) {
         Transaction returnTransaction;
         try {
             returnTransaction = transactionService.updateTransaction(id, transaction);
@@ -72,7 +75,7 @@ public class TransactionController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<?> deleteTransaction(@PathVariable long id) {
+    public ResponseEntity<?> deleteTransaction(@PathVariable Integer id) {
         transactionService.deleteTransaction(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
