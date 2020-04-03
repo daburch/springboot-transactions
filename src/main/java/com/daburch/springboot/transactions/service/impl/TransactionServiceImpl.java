@@ -19,13 +19,13 @@ public class TransactionServiceImpl implements TransactionService {
     private static final String TRANSACTIONS_SEQ_KEY = "transactions";
 
     private final CrudRepository<Transaction, Integer> transactionRepository;
-    private final SequenceDao sequenceDao;
+
+    @Autowired(required = false)
+    private SequenceDao sequenceDao;
 
     @Autowired
-    public TransactionServiceImpl(CrudRepository<Transaction, Integer> transactionRepository,
-                                  SequenceDao sequenceDao) {
+    public TransactionServiceImpl(CrudRepository<Transaction, Integer> transactionRepository) {
         this.transactionRepository = transactionRepository;
-        this.sequenceDao = sequenceDao;
     }
 
     public Transaction createTransaction(Transaction transaction) throws ValidationException, SequenceException {
