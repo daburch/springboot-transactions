@@ -1,6 +1,5 @@
 package com.daburch.springboot.transactions;
 
-import com.daburch.springboot.transactions.dao.TransactionRepository;
 import com.daburch.springboot.transactions.model.Transaction;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
@@ -12,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -25,7 +25,7 @@ import java.util.TimeZone;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@ActiveProfiles("test")
+@ActiveProfiles("h2")
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class TransactionIntegrationTests {
@@ -33,8 +33,8 @@ public class TransactionIntegrationTests {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    @MockBean(name="database")
-    private TransactionRepository mockRepository;
+    @MockBean
+    private CrudRepository<Transaction, Integer> mockRepository;
 
     private static ObjectMapper mapper;
     private static Transaction testTransaction1;
@@ -43,7 +43,7 @@ public class TransactionIntegrationTests {
     @Before
     public void init() {
         testTransaction1 = new Transaction();
-        testTransaction1.setId(1L);
+        testTransaction1.setId(1);
         testTransaction1.setDescription("First Transaction");
         testTransaction1.setAmount((float) 420.69);
         testTransaction1.setCategory("MISC");
@@ -54,7 +54,7 @@ public class TransactionIntegrationTests {
         testTransaction1.setDate(c.getTime());
 
         testTransaction2 = new Transaction();
-        testTransaction2.setId(2L);
+        testTransaction2.setId(2);
         testTransaction2.setDescription("Second Transaction");
         testTransaction2.setAmount((float) 120000.00);
         testTransaction2.setCategory("OTHER");
@@ -64,16 +64,16 @@ public class TransactionIntegrationTests {
         c2.set(Calendar.MILLISECOND, 0);
         testTransaction2.setDate(c2.getTime());
 
-        when(mockRepository.findById(1L)).thenReturn(Optional.of(testTransaction1));
-        when(mockRepository.findById(2L)).thenReturn(Optional.of(testTransaction2));
+        when(mockRepository.findById(1)).thenReturn(Optional.of(testTransaction1));
+        when(mockRepository.findById(2)).thenReturn(Optional.of(testTransaction2));
         when(mockRepository.findAll()).thenReturn(Arrays.asList(testTransaction1, testTransaction2));
         when(mockRepository.save(any(Transaction.class))).thenAnswer((Answer<Transaction>) invocation -> {
             Object[] args = invocation.getArguments();
             Transaction transaction = (Transaction) args[0];
-            transaction.setId(1L);
+            transaction.setId(1);
             return transaction;
         });
-        doNothing().when(mockRepository).deleteById(any(Long.class));
+        doNothing().when(mockRepository).deleteById(any(Integer.class));
 
         mapper = new ObjectMapper();
         mapper.setDateFormat(new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss.SSSZ"));
@@ -108,7 +108,7 @@ public class TransactionIntegrationTests {
 
         ResponseEntity<String> response = restTemplate.postForEntity("/api/v1/transaction", transaction, String.class);
 
-        transaction.setId(1L);
+        transaction.setId(1);
         String expectedResponse = mapper.writeValueAsString(transaction);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -134,8 +134,8 @@ public class TransactionIntegrationTests {
         assertEquals(HttpStatus.OK, response2.getStatusCode());
         assertEquals(expectedResponse2, response2.getBody());
 
-        verify(mockRepository, times(1)).findById(1L);
-        verify(mockRepository, times(1)).findById(2L);
+        verify(mockRepository, times(1)).findById(1);
+        verify(mockRepository, times(1)).findById(2);
     }
 
     @Test
@@ -157,7 +157,7 @@ public class TransactionIntegrationTests {
 
         ResponseEntity<String> response = restTemplate.exchange("/api/v1/transaction/1", HttpMethod.PUT, entity, String.class);
 
-        transaction.setId(1L);
+        transaction.setId(1);
         String expectedResponse = mapper.writeValueAsString(transaction);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -177,6 +177,6 @@ public class TransactionIntegrationTests {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        verify(mockRepository, times(1)).deleteById(1L);
+        verify(mockRepository, times(1)).deleteById(1);
     }
 }

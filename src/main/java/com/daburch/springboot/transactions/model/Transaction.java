@@ -1,6 +1,8 @@
 package com.daburch.springboot.transactions.model;
 
 import com.daburch.springboot.transactions.exception.ValidationException;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -8,19 +10,24 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "transactions")
+@Document("transactions")
 public class Transaction {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    private long id;
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    @Indexed
+    private Integer id;
+
     private String description;
     private float amount;
+
+    @Indexed
     private String category;
     private Date date;
 
     public Transaction() {
     }
 
-    public Transaction(long id, String description, float amount, String category, Date date) {
+    public Transaction(Integer id, String description, float amount, String category, Date date) {
         this.id = id;
         this.description = description;
         this.amount = amount;
@@ -29,7 +36,7 @@ public class Transaction {
     }
 
     public void validate() throws ValidationException {
-        if (id != 0) {
+        if (id != null) {
             throw new ValidationException("Transaction ID should not be set. This will be handled by the database");
         }
 
@@ -39,11 +46,11 @@ public class Transaction {
         if (date == null) date = new Date();
     }
 
-    public long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

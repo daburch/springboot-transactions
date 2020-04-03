@@ -1,8 +1,9 @@
 package com.daburch.springboot.transactions.dao.impl;
 
-import com.daburch.springboot.transactions.dao.TransactionRepository;
 import com.daburch.springboot.transactions.model.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
@@ -13,7 +14,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository("MySQLTransactionRepository")
-public class MySqlTransactionRepository implements TransactionRepository {
+@Profile({"mysql_local", "mysql_docker"})
+public class MySqlTransactionRepository implements CrudRepository<Transaction, Integer> {
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -38,7 +40,7 @@ public class MySqlTransactionRepository implements TransactionRepository {
         }, keyHolder);
 
         if (keyHolder.getKey() != null) {
-            entity.setId(keyHolder.getKey().longValue());
+            entity.setId(keyHolder.getKey().intValue());
         }
 
         return entity;
@@ -50,11 +52,11 @@ public class MySqlTransactionRepository implements TransactionRepository {
     }
 
     @Override
-    public Optional<Transaction> findById(Long aLong) {
+    public Optional<Transaction> findById(Integer aLong) {
         final String sql = "SELECT id, description, amount, category, date FROM transactions WHERE id = ?";
 
         List<Transaction> transactions = jdbcTemplate.query(sql, new Object[]{aLong}, (resultSet, i) ->
-                new Transaction(resultSet.getLong("id"),
+                new Transaction(resultSet.getInt("id"),
                         resultSet.getString("description"),
                         resultSet.getFloat("amount"),
                         resultSet.getString("category"),
@@ -68,14 +70,14 @@ public class MySqlTransactionRepository implements TransactionRepository {
     }
 
     @Override
-    public boolean existsById(Long aLong) {
+    public boolean existsById(Integer aLong) {
         return findById(aLong).isPresent();
     }
 
     @Override
     public Iterable<Transaction> findAll() {
         final String sql = "SELECT id, description, amount, category, date FROM transactions";
-        return jdbcTemplate.query(sql, (resultSet, i) -> new Transaction(resultSet.getLong("id"),
+        return jdbcTemplate.query(sql, (resultSet, i) -> new Transaction(resultSet.getInt("id"),
                         resultSet.getString("description"),
                         resultSet.getFloat("amount"),
                         resultSet.getString("category"),
@@ -83,7 +85,7 @@ public class MySqlTransactionRepository implements TransactionRepository {
     }
 
     @Override
-    public Iterable<Transaction> findAllById(Iterable<Long> longs) {
+    public Iterable<Transaction> findAllById(Iterable<Integer> longs) {
         return null;
     }
 
@@ -93,7 +95,7 @@ public class MySqlTransactionRepository implements TransactionRepository {
     }
 
     @Override
-    public void deleteById(Long aLong) {
+    public void deleteById(Integer aLong) {
         String deleteQuery = "delete from transactions where id = ?";
         jdbcTemplate.update(deleteQuery, aLong);
     }

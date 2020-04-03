@@ -1,8 +1,9 @@
 package com.daburch.springboot.transactions.dao.impl;
 
-import com.daburch.springboot.transactions.dao.TransactionRepository;
 import com.daburch.springboot.transactions.model.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -10,10 +11,11 @@ import java.util.Map;
 import java.util.Optional;
 
 @Repository("HashMapTransactionRepository")
-public class HashMapTransactionRepository implements TransactionRepository {
+@Profile("h2")
+public class HashMapTransactionRepository implements CrudRepository<Transaction, Integer> {
 
-    private static long id;
-    private static Map<Long, Transaction> DB;
+    private static Integer id;
+    private static Map<Integer, Transaction> DB;
 
     @Autowired
     public HashMapTransactionRepository() {
@@ -34,12 +36,12 @@ public class HashMapTransactionRepository implements TransactionRepository {
     }
 
     @Override
-    public Optional<Transaction> findById(Long aLong) {
+    public Optional<Transaction> findById(Integer aLong) {
         return Optional.ofNullable(DB.get(aLong));
     }
 
     @Override
-    public boolean existsById(Long aLong) {
+    public boolean existsById(Integer aLong) {
         return DB.containsKey(aLong);
     }
 
@@ -49,7 +51,7 @@ public class HashMapTransactionRepository implements TransactionRepository {
     }
 
     @Override
-    public Iterable<Transaction> findAllById(Iterable<Long> longs) {
+    public Iterable<Transaction> findAllById(Iterable<Integer> longs) {
         return null;
     }
 
@@ -59,7 +61,7 @@ public class HashMapTransactionRepository implements TransactionRepository {
     }
 
     @Override
-    public void deleteById(Long aLong) {
+    public void deleteById(Integer aLong) {
         DB.remove(aLong);
     }
 
